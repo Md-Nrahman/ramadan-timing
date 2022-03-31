@@ -1,0 +1,189 @@
+@font-face {
+    font-family: myFirstFont;
+    src: url('athuluth.ttf');
+}
+
+@font-face {
+    font-family: mashrafe;
+    src: url('Mashrafe.ttf');
+}
+
+@font-face {
+    font-family: SabrenaTonnyMJ;
+    src: url('SabrenaTonnyMJ.ttf');
+}
+
+@font-face {
+    font-family: kalpurush;
+    src: url('kalpurush.ttf');
+}
+
+@font-face {
+    font-family: kalpurush2;
+    src: url('kalpurush\ ANSI.ttf');
+}
+
+@font-face {
+    font-family: siyam;
+    src: url('Siyam\ Rupali\ ANSI.ttf');
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background: url('./vintage-wallpaper.png');
+    color: white;
+}
+
+.heading {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.heading h2 {
+    font-family: myFirstFont;
+    font-size: 40px;
+    padding-bottom: 0;
+    margin-top: 0;
+}
+
+.heading h1 {
+    font-family: mashrafe;
+    font-size: 70px;
+}
+
+#rest {
+    display: flex;
+    text-align: center;
+}
+
+#tables {
+    flex: 1;
+    margin-right: 35px;
+    margin-left: 10px;
+    font-family: kalpurush;
+    width: 80vw;
+}
+
+#essentials {
+    flex: 1;
+    margin-top: 65px;
+}
+
+td {
+    height: 30px;
+}
+
+th,
+td {
+    padding: 5px;
+}
+
+#tables h1,
+#table-1 h1 {
+    font-size: 24px;
+    background: #00695c;
+    overflow: auto;
+    padding: 10px 0;
+    text-align: center;
+    color: #f4f4f4;
+}
+
+table,
+th,
+td {
+    border-collapse: collapse;
+}
+
+table {
+    width: 100%;
+    margin: auto;
+}
+
+th {
+    height: 50px;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+    color: black;
+}
+
+th {
+    background-color: #880e4f;
+    color: white;
+}
+
+#timing {
+    display: flex;
+}
+
+#timing div {
+    flex: 1;
+}
+
+#countdown {
+    width: 80%;
+    margin: auto;
+    font-family: kalpurush2;
+}
+
+.box-1 {
+    overflow: auto;
+    background: #00897b;
+    border-radius: 20px;
+    text-align: center;
+}
+
+.box-2 {
+    overflow: auto;
+    background: #0288d1;
+    border-radius: 20px;
+    text-align: center;
+}
+
+.box-3 {
+    overflow: auto;
+    background: #e53935;
+    border-radius: 20px;
+    text-align: center;
+}
+
+.dowa {
+    margin-top: 100px;
+}
+
+.mash {
+    font-family: mashrafe;
+    font-size: 18px;
+}
+
+@media screen and (max-width: 600px) {
+    #rest {
+        text-align: center;
+        flex-direction: column;
+        margin: auto;
+    }
+
+    #essentials {
+        margin-top: 0;
+        width: 100vw;
+    }
+
+    .dowa {
+        width: 80%;
+        margin: 0 auto;
+    }
+
+    #tables {
+        margin-right: 0;
+        margin-left: 0;
+        margin: auto;
+        width: 100vw;
+    }
+    th,
+    td {
+        padding: 2px 3px;
+        font-size: 12px;
+    }
+}
