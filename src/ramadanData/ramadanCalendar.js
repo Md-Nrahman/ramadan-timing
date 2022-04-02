@@ -1,9 +1,5 @@
 export const ramadanCalendar = [
-  {
-    iftarTime: '16:21:00',
-    sehriTime: '16:18:00',
-    date: '2022-03-31',
-  }, {
+   {
     iftarTime: '18:19:00',
     sehriTime: '04:27:00',
     date: '2022-04-03',

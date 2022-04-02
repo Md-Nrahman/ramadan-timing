@@ -9,8 +9,16 @@ import { cascadeDate, replaceNumbers, replaceTimeString } from './components/sho
 import { showDayInBangla } from './components/showDayInBangla';
 import { sumArray, sumArrayObjectIndex } from 'sum-any';
 
+const todaysDate=()=>{
+  let yourDate = new Date()
+// yourDate.toISOString().split('T')[0]
+const offset = yourDate.getTimezoneOffset()
+yourDate = new Date(yourDate.getTime() - (offset*60*1000))
+return yourDate.toISOString().split('T')[0]
+}
+
 function App() {
-  const [currentDate, setCurrentDate] = useState(new Date().toISOString().split('T')[0])
+  const [currentDate, setCurrentDate] = useState(todaysDate())
   const [checkingObject, setCheckingObject] = useState({})
   const [timeLeft, setTimeLeft] = useState(new Date(ramadanCalendar.find(ramadan => ramadan.date == currentDate).date + " " + ramadanCalendar.find(ramadan => ramadan.date == currentDate).iftarTime) - new Date());
   const [sehriTimeLeft, setSehriTimeLeft] = useState(new Date(ramadanCalendar.find(ramadan => ramadan.date == currentDate).date + " " + ramadanCalendar.find(ramadan => ramadan.date == currentDate).sehriTime) - new Date());
@@ -22,7 +30,7 @@ function App() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentDate(new Date().toISOString().split('T')[0])
+      setCurrentDate(todaysDate())
       if (Math.floor(timeLeft / 3600000) === 0 && (Math.floor(timeLeft / 60000) - (Math.floor(timeLeft / 3600000) * 60)) === 0 && (Math.floor(timeLeft / 1000) - (Math.floor(timeLeft / 60000) * 60)) === 0) {
         setTimeLeft(0)
       } else {
@@ -42,6 +50,8 @@ function App() {
 
     return () => clearInterval(interval);
   }, []);
+
+  console.log(currentDate)
 
 
   useEffect(() => {
@@ -63,7 +73,7 @@ function App() {
 
   // useEffect(() => {
   //   setCheckingObject(ramadanCalendar.filter(ramadan => ramadan.date == currentDate))
-  //   // new Date().toISOString().split('T')[0]
+  //   // todaysDate()
   //   setTimeLeft(new Date().toISOString().split('T')[1])
   //   // console.log(new Date().toISOString().split('T')[1])
   // }, [])
