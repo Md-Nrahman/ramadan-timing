@@ -7,7 +7,6 @@ import { useEffect, useState } from 'react';
 import { ramadanCalendar } from './ramadanData/ramadanCalendar';
 import { cascadeDate, replaceNumbers, replaceTimeString } from './components/showDateInBangla';
 import { showDayInBangla } from './components/showDayInBangla';
-import { sumArray, sumArrayObjectIndex } from 'sum-any';
 
 const todaysDate=()=>{
   let yourDate = new Date()
