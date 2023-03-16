@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { ramadanCalendar } from './ramadanData/ramadanCalendar';
 import { cascadeDate, replaceNumbers, replaceTimeString } from './components/showDateInBangla';
 import { showDayInBangla } from './components/showDayInBangla';
+import axios from 'axios'
 
 const todaysDate=()=>{
   let yourDate = new Date()
@@ -19,12 +20,20 @@ return yourDate.toISOString().split('T')[0]
 function App() {
   const [currentDate, setCurrentDate] = useState(todaysDate())
   const [checkingObject, setCheckingObject] = useState({})
+  const [ramadanData, setRamadanData] = useState()
   const [timeLeft, setTimeLeft] = useState(new Date(ramadanCalendar.find(ramadan => ramadan.date == currentDate).date + " " + ramadanCalendar.find(ramadan => ramadan.date == currentDate).iftarTime) - new Date());
   const [sehriTimeLeft, setSehriTimeLeft] = useState(new Date(ramadanCalendar.find(ramadan => ramadan.date == currentDate).date + " " + ramadanCalendar.find(ramadan => ramadan.date == currentDate).sehriTime) - new Date());
   const [play, { stop }] = useSound(azan);
   const [audio] = useState(new Audio(azan));
 
-  console.log(timeLeft)
+  
+
+  const getAllRamadanData= async()=>{
+    const {data} = await axios.get("https://ramdan-backend.onrender.com/ramadan")
+    if(data){
+      console.log(data)
+    }
+  }
 
 
   useEffect(() => {
@@ -70,12 +79,9 @@ function App() {
 
 
 
-  // useEffect(() => {
-  //   setCheckingObject(ramadanCalendar.filter(ramadan => ramadan.date == currentDate))
-  //   // todaysDate()
-  //   setTimeLeft(new Date().toISOString().split('T')[1])
-  //   // console.log(new Date().toISOString().split('T')[1])
-  // }, [])
+  useEffect(() => {
+   getAllRamadanData()
+  }, [])
 
 
   return (
