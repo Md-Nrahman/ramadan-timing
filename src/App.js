@@ -1,13 +1,11 @@
-import logo from './logo.svg';
 import useSound from 'use-sound';
 import azan from './assets/azan1.mp3'
 import './App.css';
 import './main.css';
 import { useEffect, useState } from 'react';
-import { ramadanCalendar } from './ramadanData/ramadanCalendar';
-import { cascadeDate, replaceNumbers, replaceTimeString } from './components/showDateInBangla';
-import { showDayInBangla } from './components/showDayInBangla';
 import axios from 'axios'
+import TimerBox from './components/TimerBox';
+import ReusableTable from './components/ReusableTable';
 
 const todaysDate=()=>{
   let yourDate = new Date()
@@ -18,11 +16,10 @@ return yourDate.toISOString().split('T')[0]
 }
 
 function App() {
-  const [currentDate, setCurrentDate] = useState(todaysDate())
-  const [checkingObject, setCheckingObject] = useState({})
-  const [ramadanData, setRamadanData] = useState()
-  const [timeLeft, setTimeLeft] = useState(new Date(ramadanCalendar.find(ramadan => ramadan.date == currentDate).date + " " + ramadanCalendar.find(ramadan => ramadan.date == currentDate).iftarTime) - new Date());
-  const [sehriTimeLeft, setSehriTimeLeft] = useState(new Date(ramadanCalendar.find(ramadan => ramadan.date == currentDate).date + " " + ramadanCalendar.find(ramadan => ramadan.date == currentDate).sehriTime) - new Date());
+  
+ const [ramadanData, setRamadanData] = useState([])
+  const [timeLeft, setTimeLeft] = useState();
+  const [sehriTimeLeft, setSehriTimeLeft] = useState();
   const [play, { stop }] = useSound(azan);
   const [audio] = useState(new Audio(azan));
 
@@ -31,35 +28,40 @@ function App() {
   const getAllRamadanData= async()=>{
     const {data} = await axios.get("https://ramdan-backend.onrender.com/ramadan")
     if(data){
-      console.log(data)
+      setRamadanData(data?.dates)
     }
   }
 
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentDate(todaysDate())
-      if (Math.floor(timeLeft / 3600000) === 0 && (Math.floor(timeLeft / 60000) - (Math.floor(timeLeft / 3600000) * 60)) === 0 && (Math.floor(timeLeft / 1000) - (Math.floor(timeLeft / 60000) * 60)) === 0) {
-        setTimeLeft(0)
-      } else {
+    if(timeLeft && sehriTimeLeft){
+      const interval = setTimeout(() => {
+ 
+        if (Math.floor(timeLeft / 3600000) === 0 && (Math.floor(timeLeft / 60000) - (Math.floor(timeLeft / 3600000) * 60)) === 0 && (Math.floor(timeLeft / 1000) - (Math.floor(timeLeft / 60000) * 60)) === 0) {
+          setTimeLeft(0)
+        } else {
+  
+          setTimeLeft(new Date(ramadanData?.find(ramadan => ramadan.date == todaysDate()).date + " " + ramadanData?.find(ramadan => ramadan.date == todaysDate()).iftar) - new Date())
+        }
+  
+        if (Math.floor(sehriTimeLeft / 3600000) === 0 && (Math.floor(sehriTimeLeft / 60000) - (Math.floor(sehriTimeLeft / 3600000) * 60)) === 0 && (Math.floor(sehriTimeLeft / 1000) - (Math.floor(sehriTimeLeft / 60000) * 60)) === 0) {
+          setSehriTimeLeft(0)
+        } else {
+  
+          setSehriTimeLeft(new Date(ramadanData?.find(ramadan => ramadan.date == todaysDate()).date + " " + ramadanData?.find(ramadan => ramadan.date == todaysDate()).sahri) - new Date())
+        }
 
-        setTimeLeft(new Date(ramadanCalendar.find(ramadan => ramadan.date == currentDate).date + " " + ramadanCalendar.find(ramadan => ramadan.date == currentDate).iftarTime) - new Date())
-      }
+        console.log(timeLeft, sehriTimeLeft)
+  
+  
+      }, 1000);
+  
+      return () => clearInterval(interval);
+    }
+   
+  }, [timeLeft, sehriTimeLeft]);
 
-      if (Math.floor(sehriTimeLeft / 3600000) === 0 && (Math.floor(sehriTimeLeft / 60000) - (Math.floor(sehriTimeLeft / 3600000) * 60)) === 0 && (Math.floor(sehriTimeLeft / 1000) - (Math.floor(sehriTimeLeft / 60000) * 60)) === 0) {
-        setSehriTimeLeft(0)
-      } else {
-
-        setSehriTimeLeft(new Date(ramadanCalendar.find(ramadan => ramadan.date == currentDate).date + " " + ramadanCalendar.find(ramadan => ramadan.date == currentDate).sehriTime) - new Date())
-      }
-
-
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  console.log(currentDate)
+  
 
 
   useEffect(() => {
@@ -81,7 +83,20 @@ function App() {
 
   useEffect(() => {
    getAllRamadanData()
+
   }, [])
+
+  useEffect(() => {
+    if (ramadanData.length > 0) {
+      console.log(ramadanData, todaysDate())
+      setTimeLeft(ramadanData?.find(ramadan => ramadan.date == todaysDate()) ? (new Date(ramadanData?.find(ramadan => ramadan.date == todaysDate()).date + " " + ramadanData?.find(ramadan => ramadan.date == todaysDate()).iftar) - new Date()): "")
+    setSehriTimeLeft(ramadanData?.find(ramadan => ramadan.date == todaysDate()) ? (new Date(ramadanData?.find(ramadan => ramadan.date == todaysDate()).date + " " + ramadanData?.find(ramadan => ramadan.date == todaysDate()).sahri) - new Date()):"")
+  }
+
+  
+  }, [ramadanData])
+
+
 
 
   return (
@@ -100,19 +115,10 @@ function App() {
               <div id="countdown">
                 <p className='mash'>আজকের ইফতারের সময় বাকিঃ</p>
                 <div id="timing">
-                  <div className="box-1"><p style={{ color: '#f4f4f4' }} className='mash'><strong>ঘণ্টা</strong></p>
-                    <h2 id="hours" style={{ fontSize: 30, color: '#E0F2F1' }} >{Math.floor(timeLeft / 3600000)}</h2>
-                  </div>
-                  <div className="box-2" style={{ margin: '0 5px' }}>
-                    <p style={{ color: '#f4f4f4' }} className='mash'><strong>মিনিট</strong></p>
-                    <h2 id="mins" style={{ fontSize: 30, color: '#E3F2FD' }} >{Math.floor(timeLeft / 60000) - (Math.floor(timeLeft / 3600000) * 60)}</h2>
-
-                  </div>
-                  <div className="box-3">
-                    <p style={{ color: '#f4f4f4' }} className='mash'><strong>সেকেন্ড</strong></p>
-                    <h2 id="secs" style={{ fontSize: 30, color: '#FFEBEE' }} > {Math.floor(timeLeft / 1000) - (Math.floor(timeLeft / 60000) * 60)}</h2>
-
-                  </div>
+                <TimerBox title="ঘণ্টা" color="#E0F2F1" time={timeLeft} />
+                <TimerBox title="মিনিট" color="#E3F2FD" time={timeLeft} />
+                  <TimerBox title="সেকেন্ড" color="#FFEBEE" time={timeLeft} />
+                  
                 </div>
               </div>
             )}
@@ -149,95 +155,22 @@ function App() {
           </div>
           <div id="tables">
             <h3>ঢাকা ও পার্শ্ববর্তী জেলা সমূহের জন্য</h3>
-            <h2>হিজরি ১৪৪৩, বাংলা ১৪২৯, ইংরেজি ২০২২</h2>
+            <h2>হিজরি ১৪৪৪, বাংলা ১৪৩০, ইংরেজি ২০২৩</h2>
             <h1>সাহরী ও ইফতারের সময়সূচী</h1>
             <div id="table-1 container">
               <div />
               <h1>রহমতের ১০ দিন</h1>
-              <table>
-                <thead>
-                  <tr>
-                    <th>রোজা</th>
-                    <th>তারিখ</th>
-                    <th>বার</th>
-                    <th>সাহরীর শেষ সময়</th>
-                    <th>ইফতারের সময়</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {ramadanCalendar.map((single, index) => (
-                    <>
-                      {index <= 9 && (
-                        <tr>
-                          <td>{replaceNumbers((index + 1).toString())}</td>
-                          <td>{cascadeDate(single.date)}</td>
-                          <td>{showDayInBangla(single.date)}</td>
-                          <td>{'সকাল ' + replaceTimeString(single.sehriTime)}</td>
-                          <td>{'সন্ধ্যা ' + replaceTimeString(single.iftarTime)}</td>
-                        </tr>
-                      )}
-                    </>
-                  ))}
-                </tbody>
-              </table>
+              <ReusableTable firstNumber={0} lastNumber={9} ramadanData={ramadanData} />
+
             </div>
             <div id="table-2">
               <h1>মাগফিরাতের ১০ দিন</h1>
-              <table>
-                <thead>
-                  <tr>
-                    <th>রোজা</th>
-                    <th>তারিখ</th>
-                    <th>বার</th>
-                    <th>সাহরীর শেষ সময়</th>
-                    <th>ইফতারের সময়</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {ramadanCalendar.map((single, index) => (
-                    <>
-                      {(index >= 10 && index <= 19) && (
-                        <tr>
-                          <td>{replaceNumbers((index + 1).toString())}</td>
-                          <td>{cascadeDate(single.date)}</td>
-                          <td>{showDayInBangla(single.date)}</td>
-                          <td>{'সকাল ' + replaceTimeString(single.sehriTime)}</td>
-                          <td>{'সন্ধ্যা ' + replaceTimeString(single.iftarTime)}</td>
-                        </tr>
-                      )}
-                    </>
-                  ))}
-                </tbody>
-              </table>
+             <ReusableTable firstNumber={10} lastNumber={19} ramadanData={ramadanData} />
             </div>
             <div id="table-3">
               <h1>নাজাতের ১০ দিন</h1>
-              <table>
-                <thead>
-                  <tr>
-                    <th>রোজা</th>
-                    <th>তারিখ</th>
-                    <th>বার</th>
-                    <th>সাহরীর শেষ সময়</th>
-                    <th>ইফতারের সময়</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {ramadanCalendar.map((single, index) => (
-                    <>
-                      {index >= 20 && (
-                        <tr>
-                          <td>{replaceNumbers((index + 1).toString())}</td>
-                          <td>{cascadeDate(single.date)}</td>
-                          <td>{showDayInBangla(single.date)}</td>
-                          <td>{'সকাল ' + replaceTimeString(single.sehriTime)}</td>
-                          <td>{'সন্ধ্যা ' + replaceTimeString(single.iftarTime)}</td>
-                        </tr>
-                      )}
-                    </>
-                  ))}
-                </tbody>
-              </table>
+              <ReusableTable firstNumber={20} lastNumber={29} ramadanData={ramadanData} />
+
             </div>
           </div>
         </div>

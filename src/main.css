@@ -87,6 +87,11 @@ td {
     padding: 10px 0;
     text-align: center;
     color: #f4f4f4;
+    border-radius: 10px;
+}
+
+thead tr {
+    border-radius: 10px;
 }
 
 table,
@@ -133,6 +138,7 @@ th {
     background: #00897b;
     border-radius: 20px;
     text-align: center;
+    margin:2px;
 }
 
 .box-2 {
@@ -140,6 +146,7 @@ th {
     background: #0288d1;
     border-radius: 20px;
     text-align: center;
+    margin:2px;
 }
 
 .box-3 {
@@ -147,6 +154,7 @@ th {
     background: #e53935;
     border-radius: 20px;
     text-align: center;
+    margin:2px;
 }
 
 .dowa {
